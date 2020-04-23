@@ -1,26 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import * as React from 'react';
+import ThreePointVis from './ThreePointVis/ThreePointVis';
+import './index.css';
 
-function App() {
+const data = new Array(10000).fill(0).map((d, id) => ({ id }));
+
+export default function App() {
+  const [layout, setLayout] = React.useState('grid');
+  const [selectedPoint, setSelectedPoint] = React.useState(null);
+
+  const visRef = React.useRef();
+  const handleResetCamera = () => {
+    visRef.current.resetCamera();
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div className='App'>
+      <div className='vis-container'>
+        <ThreePointVis
+          ref={visRef}
+          data={data}
+          layout={layout}
+          selectedPoint={selectedPoint}
+          onSelectPoint={setSelectedPoint}
+        />
+      </div>
+      <button className='reset-button' onClick={handleResetCamera}>
+        Reset Camera
+      </button>
+      <div className='controls'>
+        <strong>Layouts</strong>{' '}
+        <button
+          onClick={() => setLayout('grid')}
+          className={layout === 'grid' ? 'active' : undefined}
         >
-          Learn React
-        </a>
-      </header>
+          Grid
+        </button>
+        <button
+          onClick={() => setLayout('spiral')}
+          className={layout === 'spiral' ? 'active' : undefined}
+        >
+          Spiral
+        </button>
+        {selectedPoint && (
+          <div className='selected-point'>
+            You selected <strong>{selectedPoint.id}</strong>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-
-export default App;
